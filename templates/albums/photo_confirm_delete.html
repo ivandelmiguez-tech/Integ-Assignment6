@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Delete Photo{% endblock %}
+{% block breadcrumb %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'album_detail' album.pk %}">{{ album.title }}</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>Remove photo</span>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="confirm-panel danger">
+  <h1>Remove this photo?</h1>
+  <p>This photo will be permanently removed from <strong>{{ album.title }}</strong>.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-danger">Yes, remove photo</button>
+      <a href="{% url 'album_detail' album.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

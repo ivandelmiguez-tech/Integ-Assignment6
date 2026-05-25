@@ -1,0 +1,34 @@
+databases:
+  - name: photo-album-db
+    plan: free
+    databaseName: photo_album
+    user: photo_album
+
+services:
+  - type: web
+    name: photo-album
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn photo_project.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: photo-album-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: USE_SQLITE
+        value: "false"
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

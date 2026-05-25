@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}Upload{% endif %} Photo{% endblock %}
+{% block breadcrumb %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'home' %}">Home</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'album_list' %}">Albums</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'album_detail' album.pk %}">{{ album.title }}</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>{% if object %}Edit photo{% else %}Upload{% endif %}</span>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="form-panel">
+  <h1>{% if object %}Edit photo{% else %}Upload a photo{% endif %}</h1>
+  <p class="form-intro">Adding to album: <strong>{{ album.title }}</strong></p>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_fields.html" %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{% if object %}Save changes{% else %}Upload photo{% endif %}</button>
+      <a href="{% url 'album_detail' album.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

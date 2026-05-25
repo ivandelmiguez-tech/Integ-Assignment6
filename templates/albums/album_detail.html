@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ album.title }} — Photo Album{% endblock %}
+{% block breadcrumb %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'home' %}">Home</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'album_list' %}">Albums</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>{{ album.title }}</span>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="album-hero">
+  <div class="page-header" style="margin-bottom: 0;">
+    <div>
+      <h1>{{ album.title }}</h1>
+      <p class="meta" style="margin-top: 0.5rem;">
+        <span>By {{ album.owner.username }}</span>
+        <span class="meta-dot">Updated {{ album.updated_at|date:"F j, Y" }}</span>
+        <span class="meta-dot">{{ photos|length }} photo{{ photos|length|pluralize }}</span>
+      </p>
+      {% if album.is_public %}
+        <span class="badge badge-public">Public album</span>
+      {% else %}
+        <span class="badge">Private album</span>
+      {% endif %}
+      {% if album.description %}
+        <p class="description">{{ album.description }}</p>
+      {% endif %}
+    </div>
+    {% if can_manage %}
+      <div class="actions">
+        <a href="{% url 'photo_create' album.pk %}" class="btn btn-primary">+ Add photo</a>
+        <a href="{% url 'album_update' album.pk %}" class="btn btn-secondary">Edit</a>
+        <a href="{% url 'album_delete' album.pk %}" class="btn btn-danger btn-sm">Delete album</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if photos %}
+  <div class="photo-grid">
+    {% for photo in photos %}
+      <figure class="photo-card">
+        <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:album.title }}" loading="lazy">
+        {% if photo.caption %}
+          <figcaption>{{ photo.caption }}</figcaption>
+        {% endif %}
+        {% if can_manage %}
+          <div class="photo-actions">
+            <a href="{% url 'photo_update' photo.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+            <a href="{% url 'photo_delete' photo.pk %}" class="btn btn-ghost btn-sm">Remove</a>
+          </div>
+        {% endif %}
+      </figure>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon" aria-hidden="true">🖼️</div>
+    <h2>This album is empty</h2>
+    <p>Add your first photo to bring this album to life.</p>
+    {% if can_manage %}
+      <a href="{% url 'photo_create' album.pk %}" class="btn btn-primary">Upload a photo</a>
+    {% endif %}
+  </div>
+{% endif %}
+
+<a href="{% url 'album_list' %}" class="back-link">← Back to all albums</a>
+{% endblock %}

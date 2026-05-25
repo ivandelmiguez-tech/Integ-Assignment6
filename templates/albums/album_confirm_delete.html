@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Delete Album{% endblock %}
+{% block breadcrumb %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'album_list' %}">Albums</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'album_detail' object.pk %}">{{ object.title }}</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>Delete</span>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="confirm-panel danger">
+  <h1>Delete this album?</h1>
+  <p>You're about to permanently delete <strong>{{ object.title }}</strong> and all {{ object.photos.count }} photo{{ object.photos.count|pluralize }} inside it. This cannot be undone.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+      <button type="submit" class="btn btn-danger">Yes, delete album</button>
+      <a href="{% url 'album_detail' object.pk %}" class="btn btn-secondary">Keep album</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

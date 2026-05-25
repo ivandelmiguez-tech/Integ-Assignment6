@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Photo Album{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <nav class="navbar" aria-label="Main navigation">
+    <a href="{% url 'home' %}" class="brand">
+      <span class="brand-icon" aria-hidden="true">📷</span>
+      Photo Album
+    </a>
+    <div class="nav-links">
+      {% if user.is_authenticated %}
+        <a href="{% url 'album_list' %}">Albums</a>
+        <a href="{% url 'album_create' %}" class="nav-cta">+ New Album</a>
+        {% if is_album_admin %}
+          <a href="{% url 'admin_dashboard' %}">Admin</a>
+        {% endif %}
+        <span class="user-pill" title="Signed in as {{ user.username }}">{{ user.username }}</span>
+        <form method="post" action="{% url 'logout' %}" class="inline-form">
+          {% csrf_token %}
+          <button type="submit" class="btn-link">Sign out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Sign in</a>
+        <a href="{% url 'signup' %}" class="nav-cta">Create account</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main id="main-content" class="container">
+    {% block breadcrumb %}{% endblock %}
+
+    {% if messages %}
+      <ul class="messages" role="status" aria-live="polite">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">
+            {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}✕{% else %}ℹ{% endif %}
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <p>Photo Album &mdash; organize and share your memories</p>
+  </footer>
+</body>
+</html>

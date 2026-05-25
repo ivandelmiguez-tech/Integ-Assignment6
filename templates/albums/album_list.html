@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Albums — Photo Album{% endblock %}
+{% block breadcrumb %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{% url 'home' %}">Home</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>Albums</span>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Your albums</h1>
+    <p class="page-subtitle">Browse collections you've created or public albums shared by others.</p>
+  </div>
+  <a href="{% url 'album_create' %}" class="btn btn-primary">+ New album</a>
+</div>
+
+{% if albums %}
+  <div class="album-grid">
+    {% for album in albums %}
+      <article class="album-card">
+        <a href="{% url 'album_detail' album.pk %}" class="album-card-link">
+          {% with first=album.photos.first %}
+            {% if first %}
+              <img src="{{ first.image.url }}" alt="" class="album-thumb">
+            {% else %}
+              <div class="album-thumb placeholder">
+                <span class="placeholder-icon" aria-hidden="true">🖼️</span>
+                <span>No photos yet</span>
+              </div>
+            {% endif %}
+          {% endwith %}
+          <div class="album-card-body">
+            <h2>{{ album.title }}</h2>
+            <p class="meta">
+              <span>{{ album.owner.username }}</span>
+              <span class="meta-dot">{{ album.photos.count }} photo{{ album.photos.count|pluralize }}</span>
+            </p>
+            {% if album.is_public %}
+              <span class="badge badge-public">Public</span>
+            {% else %}
+              <span class="badge">Private</span>
+            {% endif %}
+          </div>
+        </a>
+      </article>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+    <nav class="pagination" aria-label="Album pages">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">← Previous</a>
+      {% endif %}
+      <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next →</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon" aria-hidden="true">📷</div>
+    <h2>No albums yet</h2>
+    <p>Start your first collection and upload photos in seconds.</p>
+    <a href="{% url 'album_create' %}" class="btn btn-primary">Create your first album</a>
+  </div>
+{% endif %}
+{% endblock %}

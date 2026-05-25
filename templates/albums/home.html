@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Home — Photo Album{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="hero-badge">Your memories, organized</span>
+  <h1>Create albums. Share photos. Stay in control.</h1>
+  <p>A simple way to collect your pictures in albums, upload from any device, and choose who can see each collection.</p>
+  <div class="hero-actions">
+    {% if user.is_authenticated %}
+      <a href="{% url 'album_list' %}" class="btn btn-primary">View my albums</a>
+      <a href="{% url 'album_create' %}" class="btn btn-secondary">Create new album</a>
+    {% else %}
+      <a href="{% url 'signup' %}" class="btn btn-primary">Create free account</a>
+      <a href="{% url 'login' %}" class="btn btn-secondary">Sign in</a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="features" aria-label="Features">
+  <article class="feature-card">
+    <div class="feature-icon" aria-hidden="true">📁</div>
+    <h3>Organize in albums</h3>
+    <p>Group photos by trip, event, or theme. Add titles and descriptions so everything is easy to find.</p>
+  </article>
+  <article class="feature-card">
+    <div class="feature-icon" aria-hidden="true">🔒</div>
+    <h3>Public or private</h3>
+    <p>Keep albums private for yourself, or share them with other signed-in users when you're ready.</p>
+  </article>
+  <article class="feature-card">
+    <div class="feature-icon" aria-hidden="true">☁️</div>
+    <h3>Cloud storage</h3>
+    <p>Photos are stored safely in the cloud so your gallery loads fast and works from anywhere.</p>
+  </article>
+</section>
+{% endblock %}
