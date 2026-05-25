@@ -16,7 +16,34 @@
   <a href="{% url 'album_create' %}" class="btn btn-primary">+ New album</a>
 </div>
 
-{% if albums %}
+<form method="get" class="search-bar" role="search" action="{% url 'album_list' %}">
+  <label for="album-search" class="visually-hidden">Search albums</label>
+  <span class="search-icon" aria-hidden="true">🔍</span>
+  <input
+    type="search"
+    id="album-search"
+    name="q"
+    class="search-input"
+    placeholder="Search by title, description, or owner…"
+    value="{{ search_query }}"
+  >
+  <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  {% if search_query %}
+    <a href="{% url 'album_list' %}" class="btn btn-secondary btn-sm">Clear</a>
+  {% endif %}
+</form>
+
+{% if search_query and not albums %}
+  <div class="empty-state">
+    <div class="empty-icon" aria-hidden="true">🔍</div>
+    <h2>No albums found</h2>
+    <p>No results for "<strong>{{ search_query }}</strong>". Try a different keyword.</p>
+    <a href="{% url 'album_list' %}" class="btn btn-secondary">View all albums</a>
+  </div>
+{% elif albums %}
+  {% if search_query %}
+    <p class="search-results-meta">Showing results for "<strong>{{ search_query }}</strong>"</p>
+  {% endif %}
   <div class="album-grid">
     {% for album in albums %}
       <article class="album-card">
@@ -51,11 +78,11 @@
   {% if page_obj.has_other_pages %}
     <nav class="pagination" aria-label="Album pages">
       {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">← Previous</a>
+        <a href="?{% if search_query %}q={{ search_query|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}">← Previous</a>
       {% endif %}
       <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
       {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Next →</a>
+        <a href="?{% if search_query %}q={{ search_query|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}">Next →</a>
       {% endif %}
     </nav>
   {% endif %}

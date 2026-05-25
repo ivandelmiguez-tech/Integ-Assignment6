@@ -59,8 +59,23 @@ class AlbumListView(LoginRequiredMixin, ListView):
         user = self.request.user
         qs = Album.objects.select_related("owner").prefetch_related("photos")
         if user_is_album_admin(user):
-            return qs
-        return qs.filter(Q(is_public=True) | Q(owner=user)).distinct()
+            base = qs
+        else:
+            base = qs.filter(Q(is_public=True) | Q(owner=user)).distinct()
+
+        query = self.request.GET.get("q", "").strip()
+        if query:
+            base = base.filter(
+                Q(title__icontains=query)
+                | Q(description__icontains=query)
+                | Q(owner__username__icontains=query)
+            )
+        return base
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "").strip()
+        return context
 
 
 class AlbumDetailView(LoginRequiredMixin, AlbumViewPermissionMixin, DetailView):
